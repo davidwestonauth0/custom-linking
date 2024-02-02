@@ -55,8 +55,8 @@ app.get('/', verifyInputToken, csrfProtection, (req, res) => {
   };
 
     console.log(req.tokenPayload);
-    data.fields.email = req.tokenPayload.login_hint`];
-    data.fields.connection = req.tokenPayload.connection`];
+    data.fields.email = req.tokenPayload.login_hint;
+    data.fields.connection = req.tokenPayload.connection;
     data.fields.domain = process.env.AUTH0_CUSTOM_DOMAIN;
     data.fields.clientID = process.env.AUTH0_CLIENT_ID;
     data.fields.redirectUri = process.env.AUTH0_REDIRECT_URI;
