@@ -27,7 +27,7 @@ app.post('/callback',  (req, res) => {
       console.log(req.body);
        const formData = _.omit(req.body, '_csrf');
       const HTML = renderReturnView({
-        action: `https://${process.env.AUTH0_CUSTOM_DOMAIN}/continue?state=${req.session.state}`,
+        action: `https://${process.env.AUTH0_CUSTOM_DOMAIN}/continue?state=${req.session.state}&link_account_token=`+req.body.id_token,
         formData
       });
 
@@ -329,7 +329,7 @@ function renderProfileView(data) {
                     clientID: "<%= fields.clientID %>",
                     redirectUri: "<%= fields.redirectUri %>",
                     responseMode: 'form_post',
-                    responseType: 'token id_token'
+                    responseType: 'id_token'
                 });
 
             var webAuth = new auth0.WebAuth(params);
