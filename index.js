@@ -111,7 +111,7 @@ app.listen(PORT, () => console.log(`Listening on ${ PORT }`))
 function verifyInputToken(req, res, next) {
   const options = {
     issuer: process.env.ISSUER,
-    audience: process.env.ISSUER
+    audience: process.env.AUDIENCE
   }
 
   try {
