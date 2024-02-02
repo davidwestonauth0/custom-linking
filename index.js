@@ -27,7 +27,7 @@ app.post('/callback',  (req, res) => {
       console.log(req.body);
        const formData = _.omit(req.body, '_csrf');
       const HTML = renderReturnView({
-        action: `https://${process.env.AUTH0_DOMAIN}/continue?state=${req.session.state}`,
+        action: `https://${process.env.AUTH0_CUSTOM_DOMAIN}/continue?state=${req.session.state}`,
         formData
       });
 
@@ -57,7 +57,7 @@ app.get('/', verifyInputToken, csrfProtection, (req, res) => {
     console.log(req.tokenPayload);
     data.fields.email = req.tokenPayload[`${process.env.ISSUER}/claims/login_hint`];
     data.fields.connection = req.tokenPayload[`${process.env.ISSUER}/claims/connection`];
-    data.fields.domain = process.env.AUTH0_DOMAIN;
+    data.fields.domain = process.env.AUTH0_CUSTOM_DOMAIN;
     data.fields.clientID = process.env.AUTH0_CLIENT_ID;
     data.fields.redirectUri = process.env.AUTH0_REDIRECT_URI;
 
@@ -74,7 +74,7 @@ app.post('/', parseBody, csrfProtection, (req, res) => {
   // render form that auth-posts back to Auth0 with collected data
   const formData = _.omit(req.body, '_csrf');
   const HTML = renderReturnView({
-    action: `https://${process.env.AUTH0_DOMAIN}/continue?state=${req.session.state}`,
+    action: `https://${process.env.AUTH0_CUSTOM_DOMAIN}/continue?state=${req.session.state}`,
     formData
   });
 
@@ -91,7 +91,7 @@ app.get('/skip', (req, res) => {
   // render form that auth-posts back to Auth0 with collected data
   const formData = _.omit({skip: true, connection: req.query.connection}, '_csrf');
   const HTML = renderReturnView({
-    action: `https://${process.env.AUTH0_DOMAIN}/continue?state=${req.session.state}`,
+    action: `https://${process.env.AUTH0_CUSTOM_DOMAIN}/continue?state=${req.session.state}`,
     formData
   });
 
