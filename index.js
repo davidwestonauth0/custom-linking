@@ -26,22 +26,24 @@ const csrfProtection = csurf();
 app.post('/callback',  (req, res) => {
       console.log(req.body);
 
-       var decoded = verifyToken(req.body.id_token);
-       console.log(decoded);
-       var outputToken = createOutputToken(decoded.sub, decoded.email, req.session.state, req.session.originalToken)
 
-       const formData = _.omit(req.body, '_csrf');
-      const HTML = renderReturnView({
-        action: `https://${process.env.AUTH0_CUSTOM_DOMAIN}/continue?state=${req.session.state}&link_account_token=${outputToken}`,
-        formData
-      });
+       verifyToken(req.body.id_token)
+            .then(function(decoded) {
+                createOutputToken(decoded.sub, decoded.email, req.session.state, req.session.originalToken)
+
+               const formData = _.omit(req.body, '_csrf');
+              const HTML = renderReturnView({
+                action: `https://${process.env.AUTH0_CUSTOM_DOMAIN}/continue?state=${req.session.state}&link_account_token=${outputToken}`,
+                formData
+              });
 
 
-      // clear session
-      req.session = null;
+              // clear session
+              req.session = null;
 
-      res.set('Content-Type', 'text/html');
-      res.status(200).send(HTML);
+              res.set('Content-Type', 'text/html');
+              res.status(200).send(HTML);
+      }
 
 });
 
