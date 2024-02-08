@@ -24,7 +24,6 @@ app.use(express.json());
 const csrfProtection = csurf();
 
 app.post('/callback',  (req, res) => {
-      console.log(req.body);
 
 
        verifyToken(req.body.id_token)
@@ -91,7 +90,6 @@ app.get('/', verifyInputToken, csrfProtection, (req, res) => {
     action: req.originalUrl.split('?')[0]
   };
 
-    console.log(req.tokenPayload);
     data.fields.email = req.tokenPayload.login_hint;
     data.fields.connection = req.tokenPayload.connection;
     data.fields.domain = process.env.AUTH0_CUSTOM_DOMAIN;
@@ -148,14 +146,12 @@ function createOutputToken(user_id, email, state, originalToken) {
   var payload = {}
 
   payload = originalToken;
-  console.log(payload);
   payload["iat"] = Math.floor(new Date().getTime()/1000);
   payload["sub"] = originalToken.sub;
   payload["exp"] = Math.floor((new Date().getTime() + 60 * 60 * 1000)/1000);
   payload["state"] = state;
   payload["linkuserid"] = user_id;
   payload["linkemail"] = email;
-  console.log(payload);
   encoded = jwt.sign(payload, process.env.SECRET, { algorithm: 'HS256' });
   return encoded
 
@@ -365,7 +361,6 @@ function renderProfileView(data) {
             function continueWithLinking() {
 
 
-              console.log("in web redirect");
               webAuth.authorize({
                 login_hint: "<%= fields.email %>",
                 connection: "<%= fields.connection %>",
