@@ -27,7 +27,7 @@ app.post('/callback',  (req, res) => {
       console.log(req.body);
 
        var decoded = verifyToken(req.body.id_token);
-       var outputToken = createOutputToken(decoded.sub, decoded.email, req.session.state, req.session.originalToken, process.env.SECRET)
+       var outputToken = createOutputToken(decoded.sub, decoded.email, req.session.state, req.session.originalToken)
 
        const formData = _.omit(req.body, '_csrf');
       const HTML = renderReturnView({
@@ -140,7 +140,7 @@ function verifyInputToken(req, res, next) {
   return next();
 }
 
-function createOutputToken(user_id, email, state, originalToken, SECRET) {
+function createOutputToken(user_id, email, state, originalToken) {
 
   var payload = {}
 
@@ -150,7 +150,7 @@ function createOutputToken(user_id, email, state, originalToken, SECRET) {
   payload["link_user_id"] = user_id;
   payload["link_email"] = email;
   payload["exp"] = new Date() + (5*600);
-  encoded = jwt.encode(payload, SECRET, algorithm="HS256")
+  encoded = jwt.sign(payload, process.env.SECRET, { algorithm: 'HS256' });
   return encoded
 
 }
