@@ -27,7 +27,7 @@ app.post('/callback',  (req, res) => {
       console.log(req.body);
        const formData = _.omit(req.body, '_csrf');
       const HTML = renderReturnView({
-        action: `https://${process.env.AUTH0_CUSTOM_DOMAIN}/continue?state=${req.session.state}&link_account_token=`+req.body.id_token,
+        action: `https://${process.env.AUTH0_CUSTOM_DOMAIN}/continue?state=${req.session.state},
         formData
       });
 
@@ -122,7 +122,7 @@ function verifyInputToken(req, res, next) {
   return next();
 }
 
-function createOutputToken(sna_result, state, originalToken, SECRET) {
+function createOutputToken(user_id, state, originalToken, SECRET) {
 
   var payload = {}
   if (original_session_token !== null) {
@@ -130,6 +130,8 @@ function createOutputToken(sna_result, state, originalToken, SECRET) {
   }
   payload["iat"] = new Date();
   payload["state"] = state;
+  payload["user_id"] = user_id;
+
   payload["exp"] = new Date() + (5*600);
   encoded = jwt.encode(payload, SECRET, algorithm="HS256")
   return encoded
