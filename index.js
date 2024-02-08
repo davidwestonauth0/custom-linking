@@ -27,7 +27,7 @@ app.post('/callback',  (req, res) => {
       console.log(req.body);
        const formData = _.omit(req.body, '_csrf');
       const HTML = renderReturnView({
-        action: `https://${process.env.AUTH0_CUSTOM_DOMAIN}/continue?state=${req.session.state},
+        action: `https://${process.env.AUTH0_CUSTOM_DOMAIN}/continue?state=${req.session.state}`,
         formData
       });
 
