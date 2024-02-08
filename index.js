@@ -27,7 +27,7 @@ app.post('/callback',  (req, res) => {
       console.log(req.body);
 
        var decoded = verifyToken(req.body.id_token);
-       var outputToken = createOutputToken(decoded.sub, decoded.email, req.session.state, req.session.subject, process.env.SECRET)
+       var outputToken = createOutputToken(decoded.sub, decoded.email, req.session.state, req.session.originalToken, process.env.SECRET)
 
        const formData = _.omit(req.body, '_csrf');
       const HTML = renderReturnView({
@@ -78,6 +78,7 @@ app.get('/', verifyInputToken, csrfProtection, (req, res) => {
   // store data in session that needs to survive the POST
   req.session.subject = req.tokenPayload.sub;
   req.session.state = req.query.state;
+  req.session.originalToken = req.tokenPayload;
 
   // render the profile form
   const data = {
@@ -142,13 +143,12 @@ function verifyInputToken(req, res, next) {
 function createOutputToken(user_id, email, state, originalToken, SECRET) {
 
   var payload = {}
-  if (original_session_token !== null) {
-    payload = originalToken
-  }
+
+  payload = originalToken;
   payload["iat"] = new Date();
   payload["state"] = state;
-  payload["user_id"] = user_id;
-  payload["email"] = email;
+  payload["link_user_id"] = user_id;
+  payload["link_email"] = email;
   payload["exp"] = new Date() + (5*600);
   encoded = jwt.encode(payload, SECRET, algorithm="HS256")
   return encoded
