@@ -146,7 +146,7 @@ function createOutputToken(user_id, email, state, originalToken) {
 
   payload = originalToken;
   payload["iat"] = Math.floor(new Date().getTime()/1000);
-  payload["sub"] = subject;
+  payload["sub"] = originalToken.sub;
   payload["exp"] = Math.floor((new Date().getTime() + 60 * 60 * 1000)/1000);
   payload["state"] = state;
   payload["link_user_id"] = user_id;
