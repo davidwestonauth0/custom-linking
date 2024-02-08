@@ -29,7 +29,7 @@ app.post('/callback',  (req, res) => {
 
        verifyToken(req.body.id_token)
             .then(function(decoded) {
-                createOutputToken(decoded.sub, decoded.email, req.session.state, req.session.originalToken)
+                var outputToken = createOutputToken(decoded.sub, decoded.email, req.session.state, req.session.originalToken)
 
                const formData = _.omit(req.body, '_csrf');
               const HTML = renderReturnView({
