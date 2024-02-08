@@ -25,9 +25,13 @@ const csrfProtection = csurf();
 
 app.post('/callback',  (req, res) => {
       console.log(req.body);
+
+       var decoded = verifyToken(req.body.id_token);
+       var outputToken = createOutputToken(decoded.sub, decoded.email, req.session.state, req.session.subject, process.env.SECRET)
+
        const formData = _.omit(req.body, '_csrf');
       const HTML = renderReturnView({
-        action: `https://${process.env.AUTH0_CUSTOM_DOMAIN}/continue?state=${req.session.state}`,
+        action: `https://${process.env.AUTH0_CUSTOM_DOMAIN}/continue?state=${req.session.state}&link_account_token=${outputToken}`,
         formData
       });
 
@@ -39,6 +43,35 @@ app.post('/callback',  (req, res) => {
       res.status(200).send(HTML);
 
 });
+
+  function verifyToken(token) {
+
+    return new Promise(function(resolve, reject) {
+
+      var jwksClient = require('jwks-rsa');
+			var client = jwksClient({
+  			jwksUri: 'https://'+process.env.AUTH0_CUSTOM_DOMAIN+'/.well-known/jwks.json'
+			});
+      function getKey(header, callback){
+        client.getSigningKey(header.kid, function(err, key) {
+          var signingKey = key.publicKey || key.rsaPublicKey;
+          callback(null, signingKey);
+        });
+      }
+
+      const options = {
+        issuer: 'https://'+process.env.AUTH0_CUSTOM_DOMAIN+'/',
+        algorithms: ["RS256"]
+      };
+
+      jwt.verify(token, getKey, options, function(err, decoded) {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(decoded);
+      });
+    });
+  }
 
 app.get('/', verifyInputToken, csrfProtection, (req, res) => {
   // get required fields from JWT passed from Auth0 rule
@@ -106,7 +139,7 @@ function verifyInputToken(req, res, next) {
   return next();
 }
 
-function createOutputToken(user_id, state, originalToken, SECRET) {
+function createOutputToken(user_id, email, state, originalToken, SECRET) {
 
   var payload = {}
   if (original_session_token !== null) {
@@ -115,7 +148,7 @@ function createOutputToken(user_id, state, originalToken, SECRET) {
   payload["iat"] = new Date();
   payload["state"] = state;
   payload["user_id"] = user_id;
-
+  payload["email"] = email;
   payload["exp"] = new Date() + (5*600);
   encoded = jwt.encode(payload, SECRET, algorithm="HS256")
   return encoded
