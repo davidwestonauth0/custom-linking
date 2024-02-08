@@ -27,6 +27,7 @@ app.post('/callback',  (req, res) => {
       console.log(req.body);
 
        var decoded = verifyToken(req.body.id_token);
+       console.log(decoded);
        var outputToken = createOutputToken(decoded.sub, decoded.email, req.session.state, req.session.originalToken)
 
        const formData = _.omit(req.body, '_csrf');
