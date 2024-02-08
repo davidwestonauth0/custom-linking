@@ -145,12 +145,14 @@ function createOutputToken(user_id, email, state, originalToken) {
   var payload = {}
 
   payload = originalToken;
+  console.log(payload);
   payload["iat"] = Math.floor(new Date().getTime()/1000);
   payload["sub"] = originalToken.sub;
   payload["exp"] = Math.floor((new Date().getTime() + 60 * 60 * 1000)/1000);
   payload["state"] = state;
-  payload["link_user_id"] = user_id;
-  payload["link_email"] = email;
+  payload["linkuserid"] = user_id;
+  payload["linkemail"] = email;
+  console.log(payload);
   encoded = jwt.sign(payload, process.env.SECRET, { algorithm: 'HS256' });
   return encoded
 
