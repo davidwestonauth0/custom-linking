@@ -69,22 +69,6 @@ app.get('/', verifyInputToken, csrfProtection, (req, res) => {
 
 const parseBody = bodyParser.urlencoded({ extended: false });
 
-app.post('/', parseBody, csrfProtection, (req, res) => {
-
-  // render form that auth-posts back to Auth0 with collected data
-  const formData = _.omit(req.body, '_csrf');
-  const HTML = renderReturnView({
-    action: `https://${process.env.AUTH0_CUSTOM_DOMAIN}/continue?state=${req.session.state}`,
-    formData
-  });
-
-  // clear session
-  req.session = null;
-
-  res.set('Content-Type', 'text/html');
-  res.status(200).send(HTML);
-});
-
 
 app.get('/skip', (req, res) => {
 
