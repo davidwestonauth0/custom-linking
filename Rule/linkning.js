@@ -22,9 +22,9 @@ function (user, context, callback) {
       usersByEmailApi: auth0.baseUrl + '/users-by-email'
     },
     token: {
-      clientId: 'mbMSqGBmpboU2Q4xQRQB1XC0oudRkIAV',
-      clientSecret: 'MmIdnVI3H2kHy77zALPqjWZlvnhtcFB54CKQODYUmE0jP2tZH0gQ_cXIbgbkHuc7',
-      issuer: 'prod.oauthplayground.geoffit.co.uk'
+      clientId: 'yyy',
+      clientSecret: 'xxx',
+      issuer: 'zzz'
     }
   };
 
